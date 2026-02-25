@@ -9,9 +9,9 @@ Ember is a simple, luck-based digital card game where you try to predict the pro
 Each turn a new random card is generated, independent of the previous turns, and you earn points by accurately predicting its colour, its suit, and its rank.
 
 ### Scoring System
-- **Color:** +1 point (void if both picked)
-- **Suit:** +2 points (void if all picked)
-- **Rank:** +6 points (void if all picked)
+- **Color:** +1 point 
+- **Suit:** +2 points 
+- **Rank:** +6 points 
 
 *Note: Selecting all options within a category voids it and awards 0 points for that category.*
 
