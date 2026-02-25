@@ -1,6 +1,6 @@
 # Ember
 
-A minimalist, responsive card guessing game built entirely in vanilla HTML, CSS, and JavaScript.
+A minimalist, tiny little card game.
 
 ## The Game
 
