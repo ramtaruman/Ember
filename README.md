@@ -24,22 +24,5 @@ Each turn a new random card is generated, independent of the previous turns, and
 
 ## Getting Started
 
-Because the project uses no frameworks or build steps, it requires zero installation. 
-
 Simply open the `index.html` file in any modern web browser to play. 
 
-```bash
-# Example if cloning locally on macOS/Linux
-open index.html
-
-# Example on Windows
-start index.html
-```
-
-## Structure
-- `index.html` - The markup and structure for all game screens (Home, Setup, Game, Results, End).
-- `styles.css` - All styling including the dark monochromatic theme, animations, and responsive breakpoints.
-- `game.js` - The entire game logic loop: deck generation, scoring, UI state toggling, and multiplayer rotation.
-
-## Design
-Ember was refactored for a premium minimalistic look. It uses the `Outfit` font for the UI and standard `Georgia` for the card faces themselves to retain a classic playing card feel against an otherwise intensely modern interface.
