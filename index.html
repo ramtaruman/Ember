@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ember – Card Guessing Game</title>
+  <meta name="description"
+    content="A fun card guessing game where you earn points by predicting features of a randomly revealed playing card." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ===================== SCREEN: HOME ===================== -->
+  <div id="screen-home" class="screen active">
+    <div class="home-bg-glow"></div>
+    <div class="home-content">
+      <div class="logo-wrap">
+        <div class="logo-icon">🃏</div>
+        <h1 class="logo-title">Ember</h1>
+
+      </div>
+      <div class="home-buttons">
+        <button class="btn btn-primary btn-xl" id="btn-single">
+          <span class="btn-icon">👤</span> Single Player
+        </button>
+        <button class="btn btn-secondary btn-xl" id="btn-multi">
+          <span class="btn-icon">👥</span> Multiplayer
+        </button>
+      </div>
+      <div class="version-text">v0.1 (Kelpie)</div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: SETUP SINGLE ===================== -->
+  <div id="screen-setup-single" class="screen">
+    <div class="setup-wrap">
+      <button class="btn-back" id="back-from-setup-single">← Back</button>
+      <h2 class="setup-title">Single Player</h2>
+      <p class="setup-sub">How many turns?</p>
+      <div class="turn-options" id="turn-options">
+        <button class="turn-pill" data-turns="5">5</button>
+        <button class="turn-pill" data-turns="10">10</button>
+        <button class="turn-pill" data-turns="20">20</button>
+        <button class="turn-pill custom" data-turns="custom">Custom</button>
+      </div>
+      <div class="custom-input-wrap hidden" id="custom-input-wrap">
+        <input type="number" id="custom-turns" class="custom-input" min="1" max="100"
+          placeholder="Enter turns (1–100)" />
+      </div>
+      <button class="btn btn-primary btn-lg" id="btn-start-single">Start Game →</button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: SETUP MULTI ===================== -->
+  <div id="screen-setup-multi" class="screen">
+    <div class="setup-wrap">
+      <button class="btn-back" id="back-from-setup-multi">← Back</button>
+      <h2 class="setup-title">Multiplayer</h2>
+      <p class="setup-sub">Add players & choose turns</p>
+
+      <div class="player-list" id="player-list">
+        <div class="player-input-row">
+          <input type="text" class="player-name-input" placeholder="Player 1" maxlength="16" />
+          <button class="btn-remove-player" title="Remove">✕</button>
+        </div>
+        <div class="player-input-row">
+          <input type="text" class="player-name-input" placeholder="Player 2" maxlength="16" />
+          <button class="btn-remove-player" title="Remove">✕</button>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btn-add-player">+ Add Player</button>
+
+      <p class="setup-sub" style="margin-top:24px">Turns per player:</p>
+      <div class="turn-options" id="turn-options-multi">
+        <button class="turn-pill" data-turns="5">5</button>
+        <button class="turn-pill" data-turns="10">10</button>
+        <button class="turn-pill" data-turns="20">20</button>
+        <button class="turn-pill custom" data-turns="custom">Custom</button>
+      </div>
+      <div class="custom-input-wrap hidden" id="custom-input-wrap-multi">
+        <input type="number" id="custom-turns-multi" class="custom-input" min="1" max="100"
+          placeholder="Enter turns (1–100)" />
+      </div>
+      <button class="btn btn-primary btn-lg" id="btn-start-multi">Start Game →</button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: GAME ===================== -->
+  <div id="screen-game" class="screen">
+    <!-- Top HUD -->
+    <div class="game-hud">
+      <div class="hud-player">
+        <span class="hud-label">Player</span>
+        <span class="hud-value" id="hud-player-name">Alex</span>
+      </div>
+      <div class="hud-turn">
+        <span class="hud-label">Turn</span>
+        <span class="hud-value" id="hud-turn">1 / 10</span>
+      </div>
+      <div class="hud-score">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="hud-score">0</span>
+      </div>
+      <button class="btn-quit" id="btn-quit-game" title="Quit">✕ Quit</button>
+    </div>
+
+    <!-- Card Area -->
+    <div class="card-area">
+      <div class="card-scene" id="card-scene">
+        <div class="card-3d" id="card-3d">
+          <div class="card-face card-back" id="card-back-face">
+            <div class="card-back-pattern">
+              <div class="card-back-inner">🂠</div>
+            </div>
+          </div>
+          <div class="card-face card-front" id="card-front-face">
+            <div class="card-front-content" id="card-front-content">
+              <!-- filled by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Predictions Panel -->
+    <div class="predictions-panel" id="predictions-panel">
+
+      <!-- COLOR -->
+      <div class="pred-group" id="pred-color">
+        <div class="pred-group-header">
+          <span class="pred-label">Color</span>
+          <span class="pred-points-badge">+1 pt</span>
+        </div>
+        <div class="pred-options">
+          <button class="pred-btn color-red" data-cat="color" data-val="red" id="pred-red">❤️ Red</button>
+          <button class="pred-btn color-black" data-cat="color" data-val="black" id="pred-black">♠️ Black</button>
+        </div>
+      </div>
+
+      <!-- SUIT -->
+      <div class="pred-group" id="pred-suit">
+        <div class="pred-group-header">
+          <span class="pred-label">Suit</span>
+          <span class="pred-points-badge">+2 pts</span>
+        </div>
+        <div class="pred-options">
+          <button class="pred-btn" data-cat="suit" data-val="spades" id="pred-spades">♠ Spades</button>
+          <button class="pred-btn" data-cat="suit" data-val="hearts" id="pred-hearts">♥ Hearts</button>
+          <button class="pred-btn" data-cat="suit" data-val="diamonds" id="pred-diamonds">♦ Diamonds</button>
+          <button class="pred-btn" data-cat="suit" data-val="clubs" id="pred-clubs">♣ Clubs</button>
+        </div>
+      </div>
+
+      <!-- RANK -->
+      <div class="pred-group" id="pred-rank">
+        <div class="pred-group-header">
+          <span class="pred-label">Rank</span>
+          <span class="pred-points-badge">+6 pts</span>
+        </div>
+        <div class="pred-options rank-grid">
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="A">A</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="2">2</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="3">3</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="4">4</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="5">5</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="6">6</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="7">7</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="8">8</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="9">9</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="10">10</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="J">J</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="Q">Q</button>
+          <button class="pred-btn rank-btn" data-cat="rank" data-val="K">K</button>
+        </div>
+      </div>
+
+      <!-- Reveal Button -->
+      <button class="btn btn-reveal" id="btn-reveal">
+        <span class="reveal-icon">🃏</span> Reveal Card
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: RESULT ===================== -->
+  <div id="screen-result" class="screen">
+    <div class="result-wrap">
+      <h2 class="result-title">Card Revealed!</h2>
+
+      <!-- Card display -->
+      <div class="result-card-display" id="result-card-display">
+        <!-- filled by JS -->
+      </div>
+      <div class="result-card-name" id="result-card-name">Queen of Hearts</div>
+
+      <!-- Score breakdown -->
+      <div class="score-breakdown" id="score-breakdown">
+        <!-- filled by JS -->
+      </div>
+
+      <!-- Turn total + running score -->
+      <div class="score-total-row">
+        <div class="score-total-box">
+          <div class="score-total-label">This Turn</div>
+          <div class="score-total-value" id="result-turn-score">+9</div>
+        </div>
+        <div class="score-total-box running">
+          <div class="score-total-label">Total Score</div>
+          <div class="score-total-value" id="result-running-score">9</div>
+        </div>
+      </div>
+
+      <!-- Mini scoreboard -->
+      <div class="mini-scoreboard" id="mini-scoreboard">
+        <!-- filled by JS when multiplayer -->
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-next-turn">Next Turn →</button>
+      <button class="btn-quit result-quit" id="btn-quit-result">✕ Quit Game</button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: END GAME ===================== -->
+  <div id="screen-end" class="screen">
+    <div class="end-wrap">
+      <div class="end-confetti" id="end-confetti"></div>
+      <h2 class="end-title">Game Over!</h2>
+      <p class="end-sub" id="end-winner-msg"></p>
+      <div class="final-scoreboard" id="final-scoreboard">
+        <!-- filled by JS -->
+      </div>
+      <div class="end-stats" id="end-stats">
+        <!-- accuracy, avg per turn -->
+      </div>
+      <button class="btn btn-primary btn-lg" id="btn-play-again">🔄 Play Again</button>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST ===================== -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="game.js"></script>
+</body>
+
+</html>
