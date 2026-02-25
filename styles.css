@@ -155,7 +155,7 @@ body {
 
 .btn-secondary:hover {
   border-color: var(--text);
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
 }
 
 .btn-ghost {
@@ -167,7 +167,7 @@ body {
 .btn-ghost:hover {
   color: var(--text);
   border-color: var(--text-dim);
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
 }
 
 .btn-xl {
@@ -325,7 +325,7 @@ body {
 .turn-pill:hover {
   border-color: var(--text-dim);
   color: var(--text);
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
 }
 
 .turn-pill.selected {
@@ -596,7 +596,7 @@ body {
 }
 
 .pred-group {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
   border-radius: var(--radius);
   padding: 14px 16px;
 }
@@ -645,7 +645,7 @@ body {
 .pred-btn:hover {
   border-color: var(--text-dim);
   color: var(--text);
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
 }
 
 .pred-btn.selected {
@@ -749,7 +749,7 @@ body {
 
 .score-breakdown {
   width: 100%;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -792,7 +792,7 @@ body {
 
 .score-total-box {
   flex: 1;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
   border-radius: var(--radius);
   padding: 14px;
   text-align: center;
@@ -819,7 +819,7 @@ body {
 /* Mini scoreboard */
 .mini-scoreboard {
   width: 100%;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -920,7 +920,7 @@ body {
 
 .final-scoreboard {
   width: 100%;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
   border-radius: var(--radius);
   overflow: hidden;
   position: relative;
@@ -1007,7 +1007,7 @@ body {
 
 .stat-box {
   flex: 1;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.075);
   border-radius: var(--radius);
   padding: 14px;
   text-align: center;
