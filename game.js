@@ -154,10 +154,12 @@ function togglePrediction(btn) {
 
     if (btn.classList.contains('selected')) {
         btn.classList.remove('selected');
-        state.predictions[cat] = state.predictions[cat].filter(v => v !== val);
+        state.predictions[cat] = [];
     } else {
+        // Deselect any currently active button in this category
+        document.querySelectorAll(`.pred-btn[data-cat="${cat}"]`).forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        state.predictions[cat].push(val);
+        state.predictions[cat] = [val];
     }
 }
 
