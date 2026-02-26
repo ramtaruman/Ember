@@ -20,6 +20,83 @@ function randomCard() {
     };
 }
 
+// ─── AUDIO SYSTEM ─────────────────────────────────────────────
+let audioCtx = null;
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+const SoundFX = {
+    playTone(freq, type, duration, vol = 0.1) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    },
+    btnPress() {
+        this.playTone(440, 'sine', 0.1, 0.05);
+    },
+    reveal() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+    },
+    correct1() {
+        if (!audioCtx) return;
+        this.playTone(523.25, 'triangle', 0.2, 0.2); // C5
+    },
+    correct2() {
+        if (!audioCtx) return;
+        [523.25, 659.25].forEach((freq, i) => { // C5, E5
+            setTimeout(() => this.playTone(freq, 'triangle', 0.2, 0.2), i * 100);
+        });
+    },
+    correct3() {
+        if (!audioCtx) return;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => { // C5, E5, G5, C6
+            setTimeout(() => this.playTone(freq, 'triangle', 0.2, 0.2), i * 100);
+        });
+    },
+    wrong() {
+        if (!audioCtx) return;
+        this.playTone(150, 'sawtooth', 0.3, 0.2);
+    },
+    gameEnd() {
+        if (!audioCtx) return;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            setTimeout(() => this.playTone(freq, 'sine', 0.4, 0.1), i * 120);
+        });
+    }
+};
+
+document.addEventListener('click', (e) => {
+    initAudio();
+    if (e.target.closest('button') || e.target.closest('.turn-pill') || e.target.closest('.pred-btn')) {
+        if (!e.target.closest('#btn-reveal')) {
+            SoundFX.btnPress();
+        }
+    }
+});
+
 // ─── STATE ────────────────────────────────────────────────────
 let state = {};
 
@@ -163,6 +240,8 @@ function doReveal() {
     if (state.phase !== 'predict') return;
     state.phase = 'reveal';
 
+    SoundFX.reveal();
+
     const card = randomCard();
     state.currentCard = card;
 
@@ -190,6 +269,15 @@ function showResult(card) {
     if (anyPrediction > 0) {
         player.totalPossible += 1;
         if (total > 0) player.correct += 1;
+    }
+
+    // Play correct/wrong sounds
+    if (anyPrediction > 0) {
+        const hits = results.filter(r => r.hit).length;
+        if (hits === 1) SoundFX.correct1();
+        else if (hits === 2) SoundFX.correct2();
+        else if (hits === 3) SoundFX.correct3();
+        else if (hits === 0) SoundFX.wrong();
     }
 
     // HUD score update
@@ -291,6 +379,7 @@ function checkIfLastTurn() {
 
 // ─── END GAME ────────────────────────────────────────────────
 function showEndScreen() {
+    SoundFX.gameEnd();
     showConfetti();
 
     const sorted = [...state.players].sort((a, b) => b.score - a.score);
