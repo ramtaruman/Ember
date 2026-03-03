@@ -1,4 +1,4 @@
-# [Ember] (https://ramtaruman.github.io/Ember/)
+# [Ember](https://ramtaruman.github.io/Ember/)
 
 A minimalist, tiny little card game.
 
