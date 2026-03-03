@@ -209,6 +209,12 @@ function setupTurn() {
     const card3d = $('card-3d');
     card3d.classList.remove('flipped');
 
+    // Randomize card back pattern
+    const patterns = ['pattern-crosshatch', 'pattern-diamonds', 'pattern-zigzag', 'pattern-dots', 'pattern-lines', 'pattern-grid'];
+    const patternEl = document.querySelector('.card-back-pattern');
+    patterns.forEach(p => patternEl.classList.remove(p));
+    patternEl.classList.add(patterns[Math.floor(Math.random() * patterns.length)]);
+
     // Clear predictions UI
     document.querySelectorAll('.pred-btn').forEach(btn => btn.classList.remove('selected'));
     const btnReveal = $('btn-reveal');
@@ -627,6 +633,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         $('btn-reveal').disabled = true;
         doReveal();
+    });
+    // ── ANIMATION TOGGLE ──
+    $('btn-anim-toggle').addEventListener('click', () => {
+        const patternEl = document.querySelector('.card-back-pattern');
+        const btn = $('btn-anim-toggle');
+        patternEl.classList.toggle('pattern-paused');
+        btn.textContent = patternEl.classList.contains('pattern-paused') ? '▶' : '⏸';
     });
 
     // ── RESULT SCREEN ──
