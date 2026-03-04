@@ -20,6 +20,79 @@ function randomCard() {
     };
 }
 
+// ─── CARD ANIMATION ───────────────────────────────────────────
+const CardAnimation = (() => {
+    let canvas, ctx, raf, paused = false, t = 0;
+
+    const C1 = { r: 38, g: 148, b: 138 }; // muted teal
+    const C2 = { r: 188, g: 72, b: 110 }; // dusty rose
+
+    function lerp(a, b, n) { return Math.round(a + (b - a) * n); }
+    function smoothstep(edge0, edge1, x) {
+        const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+        return t * t * (3 - 2 * t);
+    }
+
+    function drawPlasma(w, h) {
+        const img = ctx.createImageData(w, h);
+        const d = img.data;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const v = Math.sin(x / 20 + t) +
+                    Math.sin(y / 16 + t * 1.1) +
+                    Math.sin((x + y) / 26 + t * 0.8) +
+                    Math.sin(Math.sqrt(x * x + y * y) / 18 + t);
+                const i = (y * w + x) * 4;
+                const border = 0.22; // width of border band
+                if (Math.abs(v) < border) {
+                    // smooth fade to dark border at the seam
+                    const blend = smoothstep(0, border, Math.abs(v));
+                    const c = v > 0 ? C1 : C2;
+                    d[i] = lerp(18, c.r, blend);
+                    d[i + 1] = lerp(18, c.g, blend);
+                    d[i + 2] = lerp(18, c.b, blend);
+                } else {
+                    const c = v > 0 ? C1 : C2;
+                    d[i] = c.r;
+                    d[i + 1] = c.g;
+                    d[i + 2] = c.b;
+                }
+                d[i + 3] = 255;
+            }
+        }
+        ctx.putImageData(img, 0, 0);
+    }
+
+    function tick() {
+        if (!canvas || paused) return;
+        t += 0.007;
+        drawPlasma(canvas.width, canvas.height);
+        raf = requestAnimationFrame(tick);
+    }
+
+    return {
+        init(canvasEl) {
+            canvas = canvasEl;
+            ctx = canvas.getContext('2d');
+        },
+        start() {
+            cancelAnimationFrame(raf);
+            t = Math.random() * 100; // random start phase so each card looks different
+            paused = false;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = Math.round(rect.width) || 160;
+            canvas.height = Math.round(rect.height) || 224;
+            tick();
+        },
+        togglePause() {
+            paused = !paused;
+            if (!paused) tick();
+            return paused;
+        },
+        isPaused() { return paused; },
+    };
+})();
+
 // ─── AUDIO SYSTEM ─────────────────────────────────────────────
 let audioCtx = null;
 function initAudio() {
@@ -209,11 +282,8 @@ function setupTurn() {
     const card3d = $('card-3d');
     card3d.classList.remove('flipped');
 
-    // Randomize card back pattern
-    const patterns = ['pattern-crosshatch', 'pattern-diamonds', 'pattern-zigzag', 'pattern-dots', 'pattern-lines', 'pattern-grid'];
-    const patternEl = document.querySelector('.card-back-pattern');
-    patterns.forEach(p => patternEl.classList.remove(p));
-    patternEl.classList.add(patterns[Math.floor(Math.random() * patterns.length)]);
+    // Start a new random card animation each turn
+    CardAnimation.start();
 
     // Clear predictions UI
     document.querySelectorAll('.pred-btn').forEach(btn => btn.classList.remove('selected'));
@@ -635,11 +705,10 @@ document.addEventListener('DOMContentLoaded', () => {
         doReveal();
     });
     // ── ANIMATION TOGGLE ──
+    CardAnimation.init($('card-back-canvas'));
     $('btn-anim-toggle').addEventListener('click', () => {
-        const patternEl = document.querySelector('.card-back-pattern');
-        const btn = $('btn-anim-toggle');
-        patternEl.classList.toggle('pattern-paused');
-        btn.textContent = patternEl.classList.contains('pattern-paused') ? '▶' : '⏸';
+        const isPaused = CardAnimation.togglePause();
+        $('btn-anim-toggle').textContent = isPaused ? '▶' : '⏸';
     });
 
     // ── RESULT SCREEN ──
