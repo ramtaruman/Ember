@@ -24,8 +24,8 @@ function randomCard() {
 const CardAnimation = (() => {
     let canvas, ctx, raf, paused = false, t = 0;
 
-    const C1 = { r: 38, g: 148, b: 138 }; // muted teal
-    const C2 = { r: 188, g: 72, b: 110 }; // dusty rose
+    const C1 = { r: 150, g: 0, b: 150 }; // deep vivid magenta
+    const C2 = { r: 80, g: 0, b: 170 }; // deep vivid purple
 
     function lerp(a, b, n) { return Math.round(a + (b - a) * n); }
     function smoothstep(edge0, edge1, x) {
@@ -45,15 +45,15 @@ const CardAnimation = (() => {
                 const i = (y * w + x) * 4;
                 const border = 0.22; // width of border band
                 if (Math.abs(v) < border) {
-                    // smooth fade to dark border at the seam
+                    // smooth fade to pitch black border at the seam
                     const blend = smoothstep(0, border, Math.abs(v));
                     const c = v > 0 ? C1 : C2;
-                    d[i] = lerp(18, c.r, blend);
-                    d[i + 1] = lerp(18, c.g, blend);
-                    d[i + 2] = lerp(18, c.b, blend);
+                    d[i]     = lerp(0, c.r, blend);
+                    d[i + 1] = lerp(0, c.g, blend);
+                    d[i + 2] = lerp(0, c.b, blend);
                 } else {
                     const c = v > 0 ? C1 : C2;
-                    d[i] = c.r;
+                    d[i]     = c.r;
                     d[i + 1] = c.g;
                     d[i + 2] = c.b;
                 }

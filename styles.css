@@ -485,7 +485,6 @@ body {
 
 .card-back {
   background: var(--surface);
-  border: var(--border-w) solid var(--border2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -496,6 +495,18 @@ body {
   height: 100%;
   background: #080808;
   overflow: hidden;
+  position: relative;
+}
+
+.card-back-pattern::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, transparent 30%, rgba(0, 0, 0, 0.9) 120%);
+  pointer-events: none;
 }
 
 /* Animation toggle button */
@@ -524,7 +535,6 @@ body {
 
 .card-front {
   background: #fff;
-  border: var(--border-w) solid #ccc;
   transform: rotateY(180deg);
   display: flex;
   align-items: stretch;
@@ -725,7 +735,6 @@ body {
   height: 126px;
   background: #fff;
   border-radius: 0px;
-  border: var(--border-w) solid #ccc;
   display: flex;
   align-items: stretch;
   animation: popIn 0.3s ease both;
